@@ -9,10 +9,10 @@ class Livro
     public bool status = true;
     public Livro(string tituloLivro, string autorLivro, int anoPublicacao, int numPag, bool status)
     {
-        try
+        try//Tratamento erro no arquivo
         {
             //Criação de um arquivo para armazenar os livros da biblioteca
-            StreamWriter escritor = new StreamWriter("Livros.txt", true, Encoding.UTF8); 
+            StreamWriter escritor = new StreamWriter("Lista-Livros.txt", true, Encoding.UTF8); 
             //Construtor do livro
             this.tituloLivro = tituloLivro;
             this.autorLivro = autorLivro;

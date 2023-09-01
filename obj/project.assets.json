@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\vinic\\Desktop\\programas\\biblioteca\\biblioteca.csproj",
+      "projectUniqueName": "C:\\Users\\vinic\\Desktop\\projetos\\biblioteca\\biblioteca.csproj",
       "projectName": "biblioteca",
-      "projectPath": "C:\\Users\\vinic\\Desktop\\programas\\biblioteca\\biblioteca.csproj",
+      "projectPath": "C:\\Users\\vinic\\Desktop\\projetos\\biblioteca\\biblioteca.csproj",
       "packagesPath": "C:\\Users\\vinic\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\vinic\\Desktop\\programas\\biblioteca\\obj\\",
+      "outputPath": "C:\\Users\\vinic\\Desktop\\projetos\\biblioteca\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\vinic\\AppData\\Roaming\\NuGet\\NuGet.Config"

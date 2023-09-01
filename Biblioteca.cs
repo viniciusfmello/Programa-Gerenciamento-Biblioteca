@@ -22,12 +22,11 @@ class Biblioteca
             }
         }
         Console.WriteLine("\n****LIVRO REMOVIDO DA BIBLIOTECA****\n");
-        //Abrindo o arquivo para remover o livro dele.
-        try
+        try//Tratamento erro no arquivo
         {
             string[] palavras;
             char[] separador = { ';' };
-            string[] linhas = File.ReadAllLines("Livros.txt");
+            string[] linhas = File.ReadAllLines("Lista-Livros.txt");//Abrindo o arquivo para remover o livro dele.
             for (int i = 0; i < linhas.Length; i++)
             {
                 palavras = linhas[i].Split(separador);
@@ -38,7 +37,7 @@ class Biblioteca
                     break;
                 }
             }
-            File.WriteAllLines("Livros.txt", linhas);
+            File.WriteAllLines("Lista-Livros.txt", linhas);
         }
         catch (Exception e)//Tratamento de erro no arquivo
         {
@@ -55,25 +54,26 @@ class Biblioteca
         clientes[quantClientes] = cliente;
         quantClientes++;
     }
+    
     public void RemoverCliente(int numID, Cliente cliente)
     {
         for (int i = 0; i < cliente.clientes.Length; i++)
         {
             if (cliente.clientes[i] != null)
             {
-                if (cliente.clientes[i].numID == numID)
+                if (cliente.clientes[i].getNumID() == numID)
                 {
                     cliente.clientes[i] = null;
                 }
             }
         }
         Console.WriteLine("****CLIENTE REMOVIDO DA BIBLIOTECA****");
-        //Abrindo arquivo para remover o ciente dele.
-        try
+        
+        try//Tratamento de erro do arquivo.
         {
             string[] palavras;
             char[] separador = { ';' };
-            string[] linhas = File.ReadAllLines("Clientes.txt");
+            string[] linhas = File.ReadAllLines("Lista-Clientes.txt");//Abrindo arquivo para remover o ciente dele.
             for (int i = 0; i < linhas.Length; i++)
             {
                 palavras = linhas[i].Split(separador);
@@ -84,9 +84,9 @@ class Biblioteca
                     break;
                 }
             }
-            File.WriteAllLines("Clientes.txt", linhas);
+            File.WriteAllLines("Lista-Clientes.txt", linhas);
         }
-        catch (Exception e) //Tratamento de erro do arquivo.
+        catch (Exception e) 
         {
             Console.WriteLine("Exception: " + e.Message);
         }
@@ -126,7 +126,7 @@ class Biblioteca
         {
             if (cliente.clientes[i] != null)
             {
-                Console.WriteLine($"Nome: {cliente.clientes[i].nomeCliente}\nID: {cliente.clientes[i].numID}\n----------\n");
+                Console.WriteLine($"Nome: {cliente.clientes[i].getNome()}\nID: {cliente.clientes[i].getNumID()}\n----------\n");
             }
         }
     }
@@ -138,7 +138,7 @@ class Biblioteca
         {
             if (cliente.clientes[i] != null)
             {
-                Console.WriteLine($"ID: {cliente.clientes[i].numID}\n");
+                Console.WriteLine($"ID: {cliente.clientes[i].getNome()}\n");
             }
         }
     }

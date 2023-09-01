@@ -2,16 +2,23 @@ using System.Text;
 class Cliente
 {
     Biblioteca biblioteca = new Biblioteca();
-    public string nomeCliente = "";
-    public int numID = 0;
+    private string nomeCliente = "";
+    private int numID = 0;
     public string[] listEmprest = new string[10];
-
+    public string getNome()
+    {
+        return nomeCliente;
+    }
+    public int getNumID()
+    {
+        return numID;
+    }
     public Cliente[] clientes = new Cliente[10];
     public void Construtor(string nomeCliente, int numID, string[] listEmprest)
     {
-        try
-        { //Criação de um arquivo para armazenar os clientes da biblioteca
-            StreamWriter escritor = new StreamWriter("Clientes.txt", true, Encoding.UTF8);
+        try//Tratamento de erro no arquivo
+        { 
+            StreamWriter escritor = new StreamWriter("Lista-Clientes.txt", true, Encoding.UTF8);//Criação de um arquivo para armazenar os clientes da biblioteca
 
             this.nomeCliente = nomeCliente;
             this.numID = numID;
@@ -20,11 +27,13 @@ class Cliente
             escritor.Write($"Nome: {nomeCliente} ; ID: {numID};\n");
             escritor.Close();
         }
-        catch (Exception e)//Tratamento de erro no arquivo
+        catch (Exception e)
         {
             Console.WriteLine("Exception: " + e.Message);
         }
+
     }
+
     int quantClientes = 0;
     public void InserirCliente(string nomeCliente, int idCliente, string[] listEmprest)
     {
@@ -82,7 +91,7 @@ class Cliente
             //Chamada do arquivo para alterar o status do livro no arquivo
             string[] palavras;
             char[] separador = { ';' };
-            string[] linhas = File.ReadAllLines("Livros.txt", Encoding.UTF8);
+            string[] linhas = File.ReadAllLines("Lista-Livros.txt", Encoding.UTF8);
             for (int i = 0; i < linhas.Length; i++)
             {
                 palavras = linhas[i].Split(separador);
@@ -93,7 +102,7 @@ class Cliente
                     break;
                 }
             }
-            File.WriteAllLines("Livros.txt", linhas, Encoding.UTF8);
+            File.WriteAllLines("Lista-Livros.txt", linhas, Encoding.UTF8);
         }
         catch (Exception e) //Tratamento de erro no arquivo
         {
@@ -127,7 +136,7 @@ class Cliente
 
             string[] palavras;
             char[] separador = { ';' };
-            string[] linhas = File.ReadAllLines("Livros.txt", Encoding.UTF8);
+            string[] linhas = File.ReadAllLines("Lista-Livros.txt", Encoding.UTF8);
             for (int i = 0; i < linhas.Length; i++)
             {
                 palavras = linhas[i].Split(separador);
@@ -138,7 +147,7 @@ class Cliente
                     break;
                 }
             }
-            File.WriteAllLines("Livros.txt", linhas, Encoding.UTF8);
+            File.WriteAllLines("Lista-Livros.txt", linhas, Encoding.UTF8);
         }
         catch (Exception e)//Tratamento de erro no arquivo
         {

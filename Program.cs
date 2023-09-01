@@ -1,60 +1,76 @@
 /*
 Autor do Programa: Vinicius Ferreira Mello.
 Data de construção: 24/08/2023  
-Última atualização: 29/08/2023
+Última atualização: 01/09/2023
 */
 class Program
 {
-    static void AddLivro(Biblioteca biblioteca) 
+    //Funções responsáveis pelas opções do menu. Elas tratam as informações digitadas pelo usuário e poder enviá-las corretamente para as classes e métodos.
+    static void AddLivro(Biblioteca biblioteca)
     {
-        bool tem;
+        bool tem = false;
         do
         {
-            Console.WriteLine("--------------------\n****CADASTRO DE LIVRO****\n");
-            tem = true;
-            Console.WriteLine("Digite o nome do livro, ou -1 para voltar ao menu");
-            string nomeLivro = Console.ReadLine();
-            if (nomeLivro == "-1")
+            try //Tratamento para ver se o arquivo existe
             {
+                Console.WriteLine("--------------------\n****CADASTRO DE LIVRO****\n");
                 tem = true;
-            }
-            for (int i = 0; i < biblioteca.livros.Length; i++)
-            {
-                if (biblioteca.livros[i] != null)
+
+                Console.WriteLine("Digite o nome do livro, ou -1 para voltar ao menu");
+                string nomeLivro = Console.ReadLine();
+                if (nomeLivro == "-1")
                 {
-                    if (biblioteca.livros[i].tituloLivro == nomeLivro)
+                    tem = true;
+                }
+                string[] palavras;
+                char[] separador = { ';' };
+
+                string[] linhas = File.ReadAllLines("Lista-Livros.txt"); //Lê o arquivo de texto para verificar se esse livro já está cadastrado.
+                for (int i = 0; i < linhas.Length; i++)
+                {
+                    if (linhas[i] != null)
                     {
-                        tem = false;
+                        palavras = linhas[i].Split(separador);
+
+                        if (palavras[0].Trim() == "Título: " + nomeLivro)
+                        {
+                            tem = false;
+                        }
+                    }
+                }
+                if (!tem)
+                {
+                    Console.WriteLine("****\nEsse livro já existe na biblioteca.*****");
+                    tem = false;
+                }
+                if (nomeLivro != "-1")
+                {
+                    if (tem)
+                    {
+                        Console.WriteLine("Digite o nome do autor do livro:");
+                        string nomeAutor = Console.ReadLine();
+
+                        Console.WriteLine("Digite o ano de publicação do livro:");
+                        int anoPublicacao = int.Parse(Console.ReadLine());
+
+                        Console.WriteLine("Digite a quantidade de páginas do livro:");
+                        int quantPag = int.Parse(Console.ReadLine());
+
+                        Console.WriteLine("**** LIVRO CADASTRADO COM SUCESSO****");
+                        bool status = true;
+                        nomeLivro = nomeLivro.ToUpper();
+                        nomeAutor = nomeAutor.ToUpper();
+
+                        biblioteca.InserirLivro(nomeLivro, nomeAutor, anoPublicacao, quantPag, status); ;
                     }
                 }
             }
-            if (!tem)
+            catch (FileNotFoundException)
             {
-                Console.WriteLine("****\nEsse livro já existe na biblioteca. Tente cadastrar outro.*****");
-                tem = false;
+                Console.WriteLine("O arquivo não existe.");
             }
-            if (nomeLivro != "-1")
-            {
-                if (tem)
-                {
-                    Console.WriteLine("Digite o nome do autor do livro:");
-                    string nomeAutor = Console.ReadLine();
+        }while (!tem);
 
-                    Console.WriteLine("Digite o ano de publicação do livro:");
-                    int anoPublicacao = int.Parse(Console.ReadLine());
-
-                    Console.WriteLine("Digite a quantidade de páginas do livro:");
-                    int quantPag = int.Parse(Console.ReadLine());
-
-                    Console.WriteLine("Status do livro: DISPONÍVEL");
-                    bool status = true;
-                    nomeLivro = nomeLivro.ToUpper();
-                    nomeAutor = nomeAutor.ToUpper();
-
-                    biblioteca.InserirLivro(nomeLivro, nomeAutor, anoPublicacao, quantPag, status);;
-                }
-            }
-        } while (!tem);
     }
     static void RemoverLivro(Biblioteca biblioteca)
     {
@@ -140,28 +156,35 @@ class Program
         {
             biblioteca.ExibirClientes(cliente);
             Console.WriteLine("Digite o ID do cliente que deseja emprestar esse livro:");
-            int id = int.Parse(Console.ReadLine());
-            tem = false;
-            do
+            try//Tratamento para entrada de ID do usuário.
             {
-                for (int i = 0; i < cliente.clientes.Length; i++)
+                int id = int.Parse(Console.ReadLine());
+                tem = false;
+                do
                 {
-                    if (cliente.clientes[i] != null)
+                    for (int i = 0; i < cliente.clientes.Length; i++)
                     {
-                        if (cliente.clientes[i].numID == id)
+                        if (cliente.clientes[i] != null)
                         {
-                            cliente.clientes[i].EmprestarLivro(NomeLivro, id, biblioteca, cliente);
-                            tem = true;
-                            break;
+                            if (cliente.clientes[i].getNumID() == id)
+                            {
+                                cliente.clientes[i].EmprestarLivro(NomeLivro, id, biblioteca, cliente);
+                                tem = true;
+                                break;
+                            }
                         }
                     }
-                }
-                if (!tem)
-                {
-                    Console.WriteLine("****Não existe cliente com esse ID. Digite um ID válido.****");
-                    id = int.Parse(Console.ReadLine());
-                }
-            } while (!tem);
+                    if (!tem)
+                    {
+                        Console.WriteLine("****Não existe cliente com esse ID. Digite um ID válido.****");
+                        id = int.Parse(Console.ReadLine());
+                    }
+                } while (!tem);
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("OPS, você digitou um caractere inválido. O cadastro de ID é apenas números.");
+            }
         }
     }
     static void DevolverLivro(Biblioteca biblioteca, Cliente cliente)
@@ -203,7 +226,7 @@ class Program
                                     {
                                         if (cliente.clientes[j].listEmprest[cont] == NomeLivro)
                                         {
-                                            idCliente = cliente.clientes[j].numID;
+                                            idCliente = cliente.clientes[j].getNumID();
                                             NomeLivro = NomeLivro.ToUpper();
                                             cliente.clientes[j].DevolverLivro(NomeLivro, idCliente, j, biblioteca, cliente);
                                             tem = true;
@@ -237,30 +260,47 @@ class Program
         if (tem)
         {
             bool idExiste = true;
-            Console.WriteLine("Digite o ID do cliente:");
-            int id = int.Parse(Console.ReadLine());
             do
             {
-                for (int i = 0; i < cliente.clientes.Length; i++)
+                Console.WriteLine("Digite o ID do cliente:");
+                try //Tratamento para entrada de ID do usuário e ver se arquivo existe
                 {
-                    if (cliente.clientes[i] != null)
+                    int id = int.Parse(Console.ReadLine());
+
+                    string[] palavras;
+                    char[] separador = { ';' };
+                    string[] linhas = File.ReadAllLines("Lista-Clientes.txt"); //Lê o arquivo de texto para verificar se existe cliente com o mesmo ID já cadastrado.
+                    for (int i = 0; i < linhas.Length; i++)
                     {
-                        if (id == cliente.clientes[i].numID)
+                        if (linhas[i] != null)
                         {
-                            idExiste = false;
+                            palavras = linhas[i].Split(separador);
+
+                            if (palavras[1].Trim() == "ID: " + id)
+                            {
+                                idExiste = false;
+                            }
                         }
                     }
+                    if (idExiste)
+                    {
+                        nomeCliente = nomeCliente.ToUpper();
+                        string[] listaEmprest = new string[10];
+                        cliente.InserirCliente(nomeCliente, id, listaEmprest);
+                    }
+                    if (!idExiste)
+                    {
+                        Console.WriteLine("****Este ID já existe.****\n");
+                        break;
+                    }
                 }
-                if (idExiste)
+                catch (FormatException)
                 {
-                    nomeCliente = nomeCliente.ToUpper();
-                    string[] listaEmprest = new string[10];
-                    cliente.InserirCliente(nomeCliente, id, listaEmprest);
+                    Console.WriteLine("OPS, você digitou um caractere inválido. O cadastro de ID é apenas números.");
                 }
-                if (!idExiste)
+                catch (FileNotFoundException)
                 {
-                    Console.WriteLine("****Este ID já existe.****\n");
-                    
+                    Console.WriteLine("Arquivo não encontrado.");
                 }
             } while (!idExiste);
         }
@@ -272,44 +312,52 @@ class Program
         {
             int contNull = 0, posicao = 0;
             Console.WriteLine("\nDigite o ID do cliente que você deseja remover da lista de clientes:");
-            int id = int.Parse(Console.ReadLine());
-            for (int i = 0; i < cliente.clientes.Length; i++)
+            try//Tratamento para entrada de ID do usuário.
             {
-                if (cliente.clientes[i] != null)
+                int id = int.Parse(Console.ReadLine());
+                for (int i = 0; i < cliente.clientes.Length; i++)
                 {
-                    if (cliente.clientes[i].numID == id)
+                    if (cliente.clientes[i] != null)
                     {
-                        posicao = i;
+                        if (cliente.clientes[i].getNumID() == id)
+                        {
+                            posicao = i;
+                            tem = true;
+                        }
+                    }
+                }
+                if (!tem)
+                {
+                    Console.WriteLine("Não existe cliente com esse ID. Digite um ID válido.\n");
+                }
+                if (tem)
+                {
+                    for (int j = 0; j < cliente.listEmprest.Length; j++)
+                    {
+                        if (cliente.clientes[posicao].listEmprest[j] == null)
+                        {
+                            contNull++;
+                        }
+                    }
+                    if (contNull != cliente.clientes[posicao].listEmprest.Length)
+                    {
+                        Console.WriteLine("\nNão foi possível remover esse cliente do sistema pois existem livros emprestados para ele.");
+                        tem = false;
+                    }
+                    if (contNull == cliente.clientes[posicao].listEmprest.Length)
+                    {
+                        biblioteca.RemoverCliente(id, cliente);
                         tem = true;
                     }
                 }
-            }
-            if (!tem)
-            {
-                Console.WriteLine("Não existe cliente com esse ID. Digite um ID válido.\n");
-            }
-            if (tem)
-            {
-                for (int j = 0; j < cliente.listEmprest.Length; j++)
-                {
-                    if (cliente.clientes[posicao].listEmprest[j] == null)
-                    {
-                        contNull++;
-                    }
-                }
-                if (contNull != cliente.clientes[posicao].listEmprest.Length)
-                {
-                    Console.WriteLine("\nNão foi possível remover esse cliente do sistema pois existem livros emprestados para ele.");
-                    tem = false;
-                }
-                if (contNull == cliente.clientes[posicao].listEmprest.Length)
-                {
-                    biblioteca.RemoverCliente(id, cliente);
-                    tem = true;
-                }
-            }
 
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("OPS, você digitou um caractere inválido. O cadastro de ID é apenas números.");
+            }
         } while (!tem);
+
     }
     static void ExibirInfosLivros(Biblioteca biblioteca)
     {
@@ -350,28 +398,35 @@ class Program
         bool tem = false;
         do
         {
-            Console.WriteLine("\n*****Digite o ID do cliente que deseja informações, ou -1 para voltar ao menu.****\n");
-            int id = int.Parse(Console.ReadLine());
-            if (id == (-1))
+            try//Tratamento para entrada de ID do usuário.
             {
-                tem = true;
-            }
-
-            for (int i = 0; i < cliente.clientes.Length; i++)
-            {
-                if (cliente.clientes[i] != null)
+                Console.WriteLine("\n*****Digite o ID do cliente que deseja informações, ou -1 para voltar ao menu.****\n");
+                int id = int.Parse(Console.ReadLine());
+                if (id == (-1))
                 {
-                    if (cliente.clientes[i].numID == id)
+                    tem = true;
+                }
+
+                for (int i = 0; i < cliente.clientes.Length; i++)
+                {
+                    if (cliente.clientes[i] != null)
                     {
-                        cliente.clientes[i].ExibirInfosClie(id, cliente, biblioteca);
-                        tem = true;
-                        break;
+                        if (cliente.clientes[i].getNumID() == id)
+                        {
+                            cliente.clientes[i].ExibirInfosClie(id, cliente, biblioteca);
+                            tem = true;
+                            break;
+                        }
                     }
                 }
+                if (!tem)
+                {
+                    Console.WriteLine("\n****ID do cliente não encontrado no sistema!.****");
+                }
             }
-            if (!tem)
+            catch (FormatException)
             {
-                Console.WriteLine("\n****ID do cliente não encontrado no sistema!.****");
+                Console.WriteLine("OPS, você digitou um caractere inválido. O cadastro de ID é apenas números.");
             }
         } while (!tem);
     }
@@ -379,56 +434,63 @@ class Program
     {
         Biblioteca biblioteca = new Biblioteca();
         Cliente cliente = new Cliente();
-        Console.WriteLine("\n****BIBLIOTECA DA ALEGRIA****\n");
+
+        Console.WriteLine("\n****BIBLIOTECA MELLO****\n");
         while (true)
-        {
-            //menu inicial
+        {//Menu inicial do programa
             Console.WriteLine("--------------------\nMENU DE OPÇÕES:\n--------------------\n1) Adicionar um livro na biblioteca\n2) Remover livro da biblioteca\n3) Emprestar livro\n4) Devolver livro\n5) Registrar clientes\n6) Remover clientes\n7) Exibir informações sobre livro\n8) Exibir informações sobre cliente\n0) Sair\n--------------------\n");
-            int opcao = int.Parse(Console.ReadLine());
-
-            switch (opcao)
+            try//Tratamento entrada de caractere do usuário.
             {
-                case 1:
-                    AddLivro(biblioteca);
-                    break;
+                int opcao = int.Parse(Console.ReadLine());
 
-                case 2:
-                    RemoverLivro(biblioteca);
+                switch (opcao)
+                {
+                    case 1:
+                        AddLivro(biblioteca);
+                        break;
 
-                    break;
-                case 3:
-                    EmprestarLivro(biblioteca, cliente);
-                    break;
+                    case 2:
+                        RemoverLivro(biblioteca);
 
-                case 4:
-                    DevolverLivro(biblioteca, cliente);
-                    break;
+                        break;
+                    case 3:
+                        EmprestarLivro(biblioteca, cliente);
+                        break;
 
-                case 5:
-                    RegistrarCliente(cliente);
-                    break;
+                    case 4:
+                        DevolverLivro(biblioteca, cliente);
+                        break;
 
-                case 6:
-                    RemoverCliente(cliente, biblioteca);
-                    break;
+                    case 5:
+                        RegistrarCliente(cliente);
+                        break;
 
-                case 7:
-                    ExibirInfosLivros(biblioteca);
-                    break;
-                case 8:
-                    ExibirInfosClientes(cliente, biblioteca);
+                    case 6:
+                        RemoverCliente(cliente, biblioteca);
+                        break;
 
+                    case 7:
+                        ExibirInfosLivros(biblioteca);
+                        break;
+                    case 8:
+                        ExibirInfosClientes(cliente, biblioteca);
+
+                        break;
+                    case 0:
+                        break;
+                    default:
+                        Console.WriteLine("\n****Digite uma opção válida:****\n");
+                        break;
+                }
+                if (opcao == 0)
+                {
+                    Console.WriteLine("\n****PROGRAMA FINALIZADO****");
                     break;
-                case 0:
-                    break;
-                default:
-                    Console.WriteLine("\n****Digite uma opção válida:****\n");
-                    break;
+                }
             }
-            if (opcao == 0)
+            catch (FormatException)
             {
-                Console.WriteLine("\n****PROGRAMA FINALIZADO****");
-                break;
+                Console.WriteLine("OPS, você digitou um caractere inválido. Nosso MENU trabalha apenas com números.");
             }
         }
     }

@@ -1,5 +1,14 @@
 Objetivo do Programa: 
-Desenvolver um sistema de gerenciamento de Biblioteca utilizando os conceitos primários e básicos de Programação Orientada a Objetos e Manipualação de Arquivos.
+Desenvolver um sistema de gerenciamento de Biblioteca utilizando os conceitos primários de Programação Orientada a Objetos e Manipualação de Arquivos em C#.
 
 Esse programa permite: 
-Realizar operações como adicionar e remover livros, emprestar e devolver livros, registrar e remover clientes, e exibir informações sobre livros e clientes.
+Realizar operações como: adicionar e remover livros, emprestar e devolver livros, registrar e remover clientes, e exibir informações sobre livros e clientes.
+
+Observações: 
+1- Os livros e clientes criados são armazenados dentro de um arquivo de texto para que possa haver um controle de todos eles.
+2- O arquivo de texto fica salvo dentro da pasta onde o código estiver.
+3- Não há conteúdo no arquivo pois o programa foi zerado afim de deixar o usuário primário realizar as primeiras funções.
+
+Como usar esse programa:
+Esse programa foi realizado através do VS Code e para ser usado via console. Para  usá-lo em seu computador, basta salvar o arquivo em uma pasta e abri-la no VS Code. Após abri-la, digite "dotnet run" dentro do console e o programa vai inciar. Ele conta um menu extremamente intuitivo que busca trazer bastante clareza nas operações propostas. Digite a opção desejada para realizar as devidas operações.
+
